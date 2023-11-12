@@ -14,6 +14,9 @@ else:
 # -----------------
 
 def mass_to_fuel(mass):
-    return int(mass / 3) - 2
+    fuel = int(mass / 3) - 2
+    if fuel > 0:
+        fuel += mass_to_fuel(fuel)
+    return max(fuel, 0)
 
 print(sum([mass_to_fuel(mass) for mass in data]))
