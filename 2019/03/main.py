@@ -58,8 +58,10 @@ l2 = data[1]
 
 x = 0
 y = 0
+steps = 0
 
 grid = HashGrid()
+stepgrid = HashGrid()
 
 for c in l1:
     n = int(c[1:])
@@ -67,22 +69,33 @@ for c in l1:
         case "R":
             for i in range(n):
                 x += 1
+                steps += 1
                 grid[(x, y)] = 1
+                stepgrid[(x, y)] = steps
         case "L":
             for i in range(n):
                 x -= 1
+                steps += 1
                 grid[(x, y)] = 1
+                stepgrid[(x, y)] = steps
         case "U":
             for i in range(n):
                 y -= 1
+                steps += 1
                 grid[(x, y)] = 1
+                stepgrid[(x, y)] = steps
         case "D":
             for i in range(n):
                 y += 1
+                steps += 1
                 grid[(x, y)] = 1
+                stepgrid[(x, y)] = steps
 
 x = 0
 y = 0
+steps = 0
+
+intersection_steps = []
 
 for c in l2:
     n = int(c[1:])
@@ -90,34 +103,44 @@ for c in l2:
         case "R":
             for i in range(n):
                 x += 1
+                steps += 1
                 if grid[(x, y)] == 1:
                     grid[(x, y)] = 3
+                    intersection_steps.append(stepgrid[(x, y)] + steps)
                 else:
                     grid[(x, y)] = 2
         case "L":
             for i in range(n):
                 x -= 1
+                steps += 1
                 if grid[(x, y)] == 1:
                     grid[(x, y)] = 3
+                    intersection_steps.append(stepgrid[(x, y)] + steps)
                 else:
                     grid[(x, y)] = 2
         case "U":
             for i in range(n):
                 y -= 1
+                steps += 1
                 if grid[(x, y)] == 1:
                     grid[(x, y)] = 3
+                    intersection_steps.append(stepgrid[(x, y)] + steps)
                 else:
                     grid[(x, y)] = 2
         case "D":
             for i in range(n):
                 y += 1
+                steps += 1
                 if grid[(x, y)] == 1:
                     grid[(x, y)] = 3
+                    intersection_steps.append(stepgrid[(x, y)] + steps)
                 else:
                     grid[(x, y)] = 2
 
-intersections = grid.find(3)
-intersections = [abs(x) + abs(y) for x, y in intersections]
+# intersections = grid.find(3)
+# intersections = [abs(x) + abs(y) for x, y in intersections]
 
 #print(grid)
-pp(min(intersections))
+# pp(min(intersections))
+
+pp(min(intersection_steps))
