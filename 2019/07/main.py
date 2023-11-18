@@ -16,168 +16,177 @@ else:
 
 # -----------------
 
-def handle_instr(instr):
-    global pc, data, inp
+class Machine:
+    def __init__(self, phase, data):
+        self.phase = phase
+        self.data = data
+        self.pc = 0
 
-    instr = instr.zfill(5)
-    opcode = instr[-2:]
+    def run(self, inp):
+        while True:
+            instr = self.data[self.pc]
+            instr = instr.zfill(5)
+            opcode = instr[-2:]
 
-    if opcode == "01":
-        # print("ADD")
-        mode1 = instr[-3:-2]
-        mode2 = instr[-4:-3]
+            if opcode == "01":
+                # print("ADD")
+                mode1 = instr[-3:-2]
+                mode2 = instr[-4:-3]
 
-        if mode1 == "0":
-            d1 = data[int(data[pc+1])]
-        elif mode1 == "1":
-            d1 = data[pc+1]
+                if mode1 == "0":
+                    d1 = self.data[int(self.data[self.pc+1])]
+                elif mode1 == "1":
+                    d1 = self.data[self.pc+1]
 
-        if mode2 == "0":
-            d2 = data[int(data[pc+2])]
-        elif mode2 == "1":
-            d2 = data[pc+2]
+                if mode2 == "0":
+                    d2 = self.data[int(self.data[self.pc+2])]
+                elif mode2 == "1":
+                    d2 = self.data[self.pc+2]
 
-        #print(f"{d1} + {d2} -> {int(data[pc+3])}")
+                #print(f"{d1} + {d2} -> {int(self.data[self.pc+3])}")
 
-        data[int(data[pc+3])] = str(int(d1) + int(d2))
+                self.data[int(self.data[self.pc+3])] = str(int(d1) + int(d2))
 
-        pc += 4
-    elif opcode == "02":
-        mode1 = instr[-3:-2]
-        mode2 = instr[-4:-3]
+                self.pc += 4
+            elif opcode == "02":
+                mode1 = instr[-3:-2]
+                mode2 = instr[-4:-3]
 
-        if mode1 == "0":
-            d1 = data[int(data[pc+1])]
-        elif mode1 == "1":
-            d1 = data[pc+1]
+                if mode1 == "0":
+                    d1 = self.data[int(self.data[self.pc+1])]
+                elif mode1 == "1":
+                    d1 = self.data[self.pc+1]
 
-        if mode2 == "0":
-            d2 = data[int(data[pc+2])]
-        elif mode2 == "1":
-            d2 = data[pc+2]
+                if mode2 == "0":
+                    d2 = self.data[int(self.data[self.pc+2])]
+                elif mode2 == "1":
+                    d2 = self.data[self.pc+2]
 
-        # print(f"{d1} * {d2} -> {int(data[pc+3])}")
+                # print(f"{d1} * {d2} -> {int(self.data[self.pc+3])}")
 
-        data[int(data[pc+3])] = str(int(d1) * int(d2))
+                self.data[int(self.data[self.pc+3])] = str(int(d1) * int(d2))
 
-        pc += 4
-    elif opcode == "03":
-        data[int(data[pc+1])] = inp.pop(0)
-        pc += 2
-    elif opcode == "04":
-        mode = instr[-3:-2]
-        if mode == "0":
-            d = data[int(data[pc+1])]
-        elif mode == "1":
-            d = data[pc+1]
-        print("OUT: ", d)
-        inp.insert(1, int(d))
-        pc += 2
-    elif opcode == "05":
-        mode1 = instr[-3:-2]
-        mode2 = instr[-4:-3]
+                self.pc += 4
+            elif opcode == "03":
+                if self.phase is not None:
+                    self.data[int(self.data[self.pc+1])] = self.phase
+                    self.phase = None
+                else:
+                    self.data[int(self.data[self.pc+1])] = inp
+                self.pc += 2
+            elif opcode == "04":
+                mode = instr[-3:-2]
+                if mode == "0":
+                    d = self.data[int(self.data[self.pc+1])]
+                elif mode == "1":
+                    d = self.data[self.pc+1]
+                print("OUT: ", d)
+                self.pc += 2
+                return int(d)
+            elif opcode == "05":
+                mode1 = instr[-3:-2]
+                mode2 = instr[-4:-3]
 
-        if mode1 == "0":
-            d1 = data[int(data[pc+1])]
-        elif mode1 == "1":
-            d1 = data[pc+1]
+                if mode1 == "0":
+                    d1 = self.data[int(self.data[self.pc+1])]
+                elif mode1 == "1":
+                    d1 = self.data[self.pc+1]
 
-        if mode2 == "0":
-            d2 = data[int(data[pc+2])]
-        elif mode2 == "1":
-            d2 = data[pc+2]
+                if mode2 == "0":
+                    d2 = self.data[int(self.data[self.pc+2])]
+                elif mode2 == "1":
+                    d2 = self.data[self.pc+2]
 
-        if int(d1) != 0:
-            pc = int(d2)
-        else:
-            pc += 3
-    elif opcode == "06":
-        mode1 = instr[-3:-2]
-        mode2 = instr[-4:-3]
+                if int(d1) != 0:
+                    self.pc = int(d2)
+                else:
+                    self.pc += 3
+            elif opcode == "06":
+                mode1 = instr[-3:-2]
+                mode2 = instr[-4:-3]
 
-        if mode1 == "0":
-            d1 = data[int(data[pc+1])]
-        elif mode1 == "1":
-            d1 = data[pc+1]
+                if mode1 == "0":
+                    d1 = self.data[int(self.data[self.pc+1])]
+                elif mode1 == "1":
+                    d1 = self.data[self.pc+1]
 
-        if mode2 == "0":
-            d2 = data[int(data[pc+2])]
-        elif mode2 == "1":
-            d2 = data[pc+2]
+                if mode2 == "0":
+                    d2 = self.data[int(self.data[self.pc+2])]
+                elif mode2 == "1":
+                    d2 = self.data[self.pc+2]
 
-        if int(d1) == 0:
-            pc = int(d2)
-        else:
-            pc += 3
-    elif opcode == "07":
-        mode1 = instr[-3:-2]
-        mode2 = instr[-4:-3]
+                if int(d1) == 0:
+                    self.pc = int(d2)
+                else:
+                    self.pc += 3
+            elif opcode == "07":
+                mode1 = instr[-3:-2]
+                mode2 = instr[-4:-3]
 
-        if mode1 == "0":
-            d1 = data[int(data[pc+1])]
-        elif mode1 == "1":
-            d1 = data[pc+1]
+                if mode1 == "0":
+                    d1 = self.data[int(self.data[self.pc+1])]
+                elif mode1 == "1":
+                    d1 = self.data[self.pc+1]
 
-        if mode2 == "0":
-            d2 = data[int(data[pc+2])]
-        elif mode2 == "1":
-            d2 = data[pc+2]
+                if mode2 == "0":
+                    d2 = self.data[int(self.data[self.pc+2])]
+                elif mode2 == "1":
+                    d2 = self.data[self.pc+2]
 
-        if int(d1) < int(d2):
-            data[int(data[pc+3])] = 1
-        else:
-            data[int(data[pc+3])] = 0
+                if int(d1) < int(d2):
+                    self.data[int(self.data[self.pc+3])] = 1
+                else:
+                    self.data[int(self.data[self.pc+3])] = 0
 
-        pc += 4
-    elif opcode == "08":
-        mode1 = instr[-3:-2]
-        mode2 = instr[-4:-3]
+                self.pc += 4
+            elif opcode == "08":
+                mode1 = instr[-3:-2]
+                mode2 = instr[-4:-3]
 
-        if mode1 == "0":
-            d1 = data[int(data[pc+1])]
-        elif mode1 == "1":
-            d1 = data[pc+1]
+                if mode1 == "0":
+                    d1 = self.data[int(self.data[self.pc+1])]
+                elif mode1 == "1":
+                    d1 = self.data[self.pc+1]
 
-        if mode2 == "0":
-            d2 = data[int(data[pc+2])]
-        elif mode2 == "1":
-            d2 = data[pc+2]
+                if mode2 == "0":
+                    d2 = self.data[int(self.data[self.pc+2])]
+                elif mode2 == "1":
+                    d2 = self.data[self.pc+2]
 
-        if int(d1) == int(d2):
-            data[int(data[pc+3])] = 1
-        else:
-            data[int(data[pc+3])] = 0
+                if int(d1) == int(d2):
+                    self.data[int(self.data[self.pc+3])] = 1
+                else:
+                    self.data[int(self.data[self.pc+3])] = 0
 
-        pc += 4
-    elif opcode == "99":
-        return False
-    return True
+                self.pc += 4
+            elif opcode == "99":
+                print("HALT")
+                return None
 
-
-orig_data = data.copy()
 n_machines = 5
 
-# All numbers with n_machines digits, as integer
-phases = itertools.permutations('01234', 5)
+phases = itertools.permutations('56789', 5)
 
 best_phase = ""
 best_output = 0
 
 for phase in phases:
-    inp = [int(x) for x in phase]
-    inp.insert(1, 0)
-    for n in range(0, n_machines):
-        data = orig_data.copy()
-        pc = 0
+    machines = [Machine(int(x), data.copy()) for x in phase]
 
-        while pc < len(data):
-            instr = data[pc]
-            ret = handle_instr(instr)
-            if not ret:
-                if inp[0] > best_output:
-                    print("output:", inp[0])
-                    best_output = inp[0]
-                    best_phase = phase
+    inp = 0
+
+    last_out = 0
+    while True:
+        for n in range(0, len(machines)):
+            inp = machines[n].run(inp)
+            if inp is None:
                 break
+        if inp is None:
+            break
+        last_out = inp
+
+    if last_out > best_output:
+        best_output = last_out
+        best_phase = phase
 
 print("BEST:", best_phase, best_output)
