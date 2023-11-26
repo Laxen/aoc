@@ -20,10 +20,21 @@ height = 6
 
 img = np.array([int(x) for x in data])
 img = img.reshape((int(len(data)/(width*height)), width, height))
-print(img)
-zero_cnt = np.sum(img == 0, axis=(1, 2))
-zero_i = np.argmin(zero_cnt)
 
-n_ones = np.sum(img[zero_i] == 1)
-n_twos = np.sum(img[zero_i] == 2)
-print(n_ones * n_twos)
+pic = [2 for _ in range(width*height)]
+print(pic)
+
+for layer in range(img.shape[0]):
+    print("dealing with", img[layer])
+    f = img[layer].flatten()
+    for i, x in enumerate(f):
+        if x != 2 and pic[i] == 2:
+            pic[i] = x
+            print(i, "is", x)
+
+pic = np.array(pic)
+pic = pic.reshape(height, width)
+pic = np.where(pic == 1, "o", " ")
+
+np.set_printoptions(linewidth=np.inf)
+print(pic)
