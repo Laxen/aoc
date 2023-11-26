@@ -23,12 +23,12 @@ class Asteroid:
         self.x = x
         self.y = y
         self.n_visible = 0
+        self.visible = []
 
     def visible_asteroids(self, data):
-        print("starting for", self.y, self.x)
+        self.visible = []
         for (y, x), val in np.ndenumerate(data):
             if val == "#" and not (self.x == x and self.y == y):
-                print("  found", y, x)
                 dx = x - self.x
                 dy = y - self.y
                 gcd = np.gcd(dx, dy)
@@ -45,6 +45,7 @@ class Asteroid:
                     ty += dy
                 else:
                     self.n_visible += 1
+                    self.visible.append((y, x))
 
     def __repr__(self):
         return f"{self.n_visible}"
@@ -55,4 +56,17 @@ for (y, x), val in np.ndenumerate(data):
         asteroids[(y, x)] = Asteroid(x, y)
         asteroids[(y, x)].visible_asteroids(data)
 
-print(dict(sorted(asteroids.items(), key=lambda item: item[1].n_visible, reverse=True)))
+xbase = 11
+ybase = 11
+
+cnt = 0
+while True:
+    asteroids[(ybase,xbase)].visible_asteroids(data)
+    s_vis = sorted(asteroids[(ybase,xbase)].visible, key=lambda item: (np.arctan2(item[0] - ybase, item[1] - xbase) + np.pi / 2) % (2 * np.pi))
+    for a in s_vis:
+        print(a)
+        data[a[0], a[1]] = "."
+        cnt += 1
+        if cnt == 200:
+            print(a[1] * 100 + a[0])
+            exit()
