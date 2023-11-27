@@ -6,7 +6,7 @@ np.set_printoptions(linewidth=np.inf)
 
 def make_data(input_file):
     with open(input_file, "r") as f:
-        return f.readlines()
+        return [line.rstrip() for line in f]
 
 if len(sys.argv) > 1:
     print("INPUT\n")
@@ -17,24 +17,21 @@ else:
 
 # -----------------
 
-glob_twos = 0
-glob_threes = 0
+for a in data:
+    for b in data:
+        if a == b:
+            continue
 
-for l in data:
-    l = l.strip()
-    counts = dict()
-    for c in l:
-        if c in counts:
-            counts[c] += 1
+        count = 0
+        res = ""
+        for i in range(len(a)):
+            if a[i] != b[i]:
+                count += 1
+            else:
+                res += a[i]
+
+            if count > 1:
+                break
         else:
-            counts[c] = 1
-
-    twos = [key for key, val in counts.items() if val == 2]
-    threes = [key for key, val in counts.items() if val == 3]
-
-    if len(twos) > 0:
-        glob_twos += 1
-    if len(threes) > 0:
-        glob_threes += 1
-
-print(glob_twos * glob_threes)
+            print(res)
+            exit()
