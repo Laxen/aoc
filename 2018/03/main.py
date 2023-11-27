@@ -36,6 +36,12 @@ class Claim:
             else:
                 map[c] = 1
 
+    def check_map(self, map):
+        for c, _ in self.map.items():
+            if map[c] > 1:
+                return False
+        return True
+
     def __repr__(self):
         return f"{self.id}"
 
@@ -47,9 +53,7 @@ map = dict()
 for claim in claims:
     claim.merge_map(map)
 
-count = 0
-for c, v in map.items():
-    if v > 1:
-        count += 1
-
-print(count)
+for claim in claims:
+    check = claim.check_map(map)
+    if check:
+        print(claim.id)
