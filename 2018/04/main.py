@@ -38,27 +38,24 @@ for line in data:
 
 max_sleep = timedelta(0)
 max_guard = 0
+maxies = 0
+maxies_guard = 0
+maxies_min = 0
 for g, s in sleep.items():
-    sleep_time = timedelta(0)
+    sleep_hist = defaultdict(int)
     for i in range(1, len(s), 2):
-        sleep_time += s[i] - s[i-1]
-        # print("guard", g, ":", s[i-1], "-", s[i], "tot", sleep_time)
+        start = s[i-1]
+        end = s[i]
+        delta = timedelta(minutes=1)
+        while start < end:
+            sleep_hist[start.minute] += 1
+            start += delta
 
-    if sleep_time > max_sleep:
-        max_sleep = sleep_time
-        max_guard = g
+    m = max(sleep_hist.items(), key=lambda item: item[1])
+    print(m)
+    if m[1] > maxies:
+        maxies = m[1]
+        maxies_guard = g
+        maxies_min = m[0]
 
-s = sleep[max_guard]
-sleep_max = defaultdict(int)
-for i in range(1, len(s), 2):
-    start = s[i-1]
-    end = s[i]
-    delta = timedelta(minutes=1)
-    while start < end:
-        sleep_max[start.minute] += 1
-        start += delta
-
-# sleep_max = dict(sorted(sleep_max.items(), key=lambda item: item[1], reverse=True))
-# print(sleep_max[0])
-m = max(sleep_max.items(), key=lambda item: item[1])[0]
-print(int(m) * int(max_guard))
+print(int(maxies_min) * int(maxies_guard))
