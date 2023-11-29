@@ -32,28 +32,16 @@ for i in range(1, len(data), 2):
     xmax = max(data[i-1], xmax)
     ymax = max(data[i], ymax)
 
+dists = dict()
 for x in range(0, xmax+1):
     for y in range(0, ymax+1):
         val = None
-        mindist = 1000000000
+        dist = 0
         for c, v in coords.items():
-            dist = manhattan((x, y), c)
-            if dist < mindist:
-                mindist = dist
-                val = coords[c]
-            elif dist == mindist:
-                val = None
+            dist += manhattan((x, y), c)
+            if dist >= 10000:
+                break
+        else:
+            dists[(x, y)] = dist
 
-        themap[(x, y)] = val
-
-count = defaultdict(int)
-for c, v in themap.items():
-    if c[0] == 0 or c[0] == xmax:
-        count[v] += 100000
-    elif c[1] == 0 or c[1] == ymax:
-        count[v] += 100000
-    else:
-        count[v] += 1
-
-count = sorted([val for val in count.values() if val < 100000], reverse=True)
-print(count)
+print(len(dists))
