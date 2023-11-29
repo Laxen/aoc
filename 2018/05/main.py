@@ -2,6 +2,7 @@ import sys
 import numpy as np
 from collections import defaultdict
 from pyhelpers import Parser
+from string import ascii_uppercase
 
 np.set_printoptions(linewidth=np.inf)
 
@@ -22,12 +23,10 @@ def reduce(data):
     i = 1
     newdata = ""
     while True:
-        print(i, len(data))
         c1 = data[i]
         c2 = data[i-1]
 
         if c1 != c2 and (c1.lower() == c2 or c1 == c2.lower()):
-            print("React", c1, c2)
             i += 1
         else:
             newdata += data[i-1]
@@ -41,9 +40,20 @@ def reduce(data):
 
     return newdata
 
+origdata = data
+lengths = []
 
-prevdata = reduce(data)
-while prevdata != data:
-    data = prevdata
+for c in ascii_uppercase:
+    print(c)
+    data = origdata
+    data = data.replace(c, "")
+    data = data.replace(c.lower(), "")
+
     prevdata = reduce(data)
-print(len(data))
+    while prevdata != data:
+        data = prevdata
+        prevdata = reduce(data)
+
+    lengths.append(len(data))
+
+print(min(lengths))
