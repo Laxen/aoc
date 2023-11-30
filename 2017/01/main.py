@@ -21,14 +21,11 @@ else:
 sum = 0
 i = 0
 while True:
-    if i == len(data)-1:
-        if data[i] == data[0]:
-            sum += int(data[i])
+    if i == len(data):
         break
 
-    if data[i] == data[i+1]:
+    if data[int(i + len(data)/2) % len(data)] == data[i]:
         sum += int(data[i])
-
     i += 1
 
-print("Part 1:", sum)
+print(sum)
