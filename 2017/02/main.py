@@ -22,11 +22,23 @@ else:
 
 # -----------------
 
+def handle(row):
+    for i1 in range(0, len(row) - 1):
+        for i2 in range(i1+1, len(row)):
+            x1 = row[i1]
+            x2 = row[i2]
+
+            if x1 == 0 or x2 == 0:
+                continue
+
+            if x1 % x2 == 0:
+                return x1/x2
+            elif x2 % x1 == 0:
+                return x2/x1
+    exit()
+
 sum = 0
 for row in data:
-    mi = min(row)
-    ma = max(row)
-    print(ma, mi)
-    sum += ma-mi
+    sum += handle(row)
 
 print(sum)
