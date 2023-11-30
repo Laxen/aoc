@@ -33,3 +33,4 @@ def get_ring(idx):
 
 
 print(get_ring(347991))
+# uwu
