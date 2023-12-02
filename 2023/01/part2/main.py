@@ -3,13 +3,24 @@ import numpy as np
 from collections import defaultdict
 from pyhelpers import Parser
 import re
-import time
 
 np.set_printoptions(linewidth=np.inf)
 
 def make_data(input_file):
+    ret = []
     with open(input_file) as file:
-        return file.read().splitlines()
+        for line in file:
+            line = line.replace("one", "o1e")
+            line = line.replace("two", "t2o")
+            line = line.replace("three", "t3e")
+            line = line.replace("four", "f4r")
+            line = line.replace("five", "f5e")
+            line = line.replace("six", "s6x")
+            line = line.replace("seven", "s7n")
+            line = line.replace("eight", "e8t")
+            line = line.replace("nine", "n9e")
+            ret.append(re.findall(r"\d", line))
+    return ret
 
 if len(sys.argv) > 1:
     print("INPUT\n")
@@ -20,53 +31,5 @@ else:
 
 # -----------------
 
-
-sum = 0
-for l in data:
-    first = -1
-    last = -1
-    newl = l
-    alpha = ""
-    print(l)
-    for n in newl:
-        if n.isnumeric() == False:
-            alpha += n
-            if "one" in alpha:
-                alpha = n
-                n = 1
-            elif "two" in alpha:
-                alpha = n
-                n = 2
-            elif "three" in alpha:
-                alpha = n
-                n = 3
-            elif "four" in alpha:
-                alpha = n
-                n = 4
-            elif "five" in alpha:
-                alpha = n
-                n = 5
-            elif "six" in alpha:
-                alpha = n
-                n = 6
-            elif "seven" in alpha:
-                alpha = n
-                n = 7
-            elif "eight" in alpha:
-                alpha = n
-                n = 8
-            elif "nine" in alpha:
-                alpha = n
-                n = 9
-            else:
-                continue
-
-        if first == -1:
-            first = int(n)
-            last = int(n)
-        else:
-            last = int(n)
-    print(first, last)
-    sum += int(str(first) + str(last))
-
-print(sum)
+s = sum([int(row[0] + row[-1]) for row in data])
+print(s)
