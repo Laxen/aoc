@@ -2,6 +2,7 @@ import sys
 import numpy as np
 from collections import defaultdict
 from pyhelpers import Parser
+import re
 
 np.set_printoptions(linewidth=np.inf)
 
