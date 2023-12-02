@@ -55,7 +55,6 @@ for g in data:
         greens = max(greens, colors[1])
         blues = max(blues, colors[2])
 
-    if reds <= 12 and greens <= 13 and blues <= 14:
-        s += g.id
+    s += reds * greens * blues
 
 print(s)
