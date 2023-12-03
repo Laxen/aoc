@@ -7,10 +7,8 @@ import re
 np.set_printoptions(linewidth=np.inf)
 
 def make_data(input_file):
-    ret = []
     with open(input_file, "r") as f:
-        for l in f:
-            ret.append([c for c in l.strip()])
+        ret = [list(line.strip()) for line in f.readlines()]
     return np.array(ret)
 
 if len(sys.argv) > 1:
