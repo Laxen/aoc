@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-from collections import defaultdict
+from collections import defaultdict, deque
 from pyhelpers import Parser
 import re
 
