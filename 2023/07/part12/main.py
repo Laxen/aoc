@@ -89,5 +89,3 @@ data.reverse()
 
 s = sum([(i+1) * int(c.bid) for i, c in enumerate(data)])
 print(s)
-
-assert s == 250384185
