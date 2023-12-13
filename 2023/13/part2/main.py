@@ -1,21 +1,22 @@
 import sys, re, time
 import numpy as np
 from collections import defaultdict, deque
-from pyhelpers import Parser
 from pprint import pprint
 
 np.set_printoptions(linewidth=np.inf)
 
 def make_data(input_file):
     ret = []
-    ret.append([])
     with open(input_file, "r") as f:
+        miniret = []
         for line in f:
             if line.strip() == "":
-                ret.append([])
+                ret.append(np.array(miniret))
+                miniret = []
             else:
                 element = line.strip()
-                ret[-1].append(list(element))
+                miniret.append(list(element))
+    ret.append(np.array(miniret))
     return ret
 
 if len(sys.argv) > 1:
@@ -32,64 +33,35 @@ def fold(pattern, avoid):
         if i == avoid:
             continue
 
-        top = pattern[:i]
-        bottom = pattern[i:]
-        bottom.reverse()
-
-        # print(i, "top")
-        # pprint(top)
-        # print(i, "bottom")
-        # pprint(bottom)
-        # print(i, "bottom[:i]")
-        # pprint(bottom[:i])
-        # print()
+        top = pattern[:i,:]
+        bottom = pattern[i:,:]
+        bottom = np.flipud(bottom)
 
         if len(top) > len(bottom):
-            if top[len(top) - len(bottom):] == bottom:
+            if np.all(top[-len(bottom):,:] == bottom):
                 return i
         else:
-            if top == bottom[len(bottom) - len(top):]:
+            if np.all(top == bottom[-len(top):,:]):
                 return i
 
     return None
 
-def smudge(pattern, initial, s):
+def smudge(pattern, initial):
     for y in range(len(pattern)):
         for x in range(len(pattern[y])):
-            if pattern[y][x] == "#":
-                pattern[y][x] = "."
-            else:
-                pattern[y][x] = "#"
+            pattern[y,x] = "#" if pattern[y,x] == "." else "."
 
-            avoid = None
-            if initial[0] == "H":
-                avoid = int(initial[1:])
+            avoid = int(initial[1:])
 
-            row = fold(pattern, avoid)
+            row = fold(pattern, avoid if "H" in initial else None)
             if row and "H" + str(row) != initial:
-                s = 100 * row
-                print("H" + str(row), y, x)
-                return s
+                return 100 * row
 
-            avoid = None
-            if initial[0] == "V":
-                avoid = int(initial[1:])
-
-            pattern = list(map(list, zip(*pattern)))
-            col = fold(pattern, int(initial[1:]))
+            col = fold(pattern.T, avoid)
             if col and "V" + str(col) != initial:
-                s = col
-                print("V" + str(col), y, x)
-                return s
+                return col
 
-            pattern = list(map(list, zip(*pattern)))
-
-            if pattern[y][x] == "#":
-                pattern[y][x] = "."
-            else:
-                pattern[y][x] = "#"
-
-    pprint(pattern)
+            pattern[y,x] = "#" if pattern[y,x] == "." else "."
     raise Exception("No smudge found")
 
 s = 0
@@ -102,16 +74,12 @@ for pattern in data:
         initial = "H" + str(row)
 
     if not initial:
-        pattern = list(map(list, zip(*pattern)))
-        col = fold(pattern, None)
+        col = fold(pattern.T, None)
         if col:
             initial = "V" + str(col)
-        pattern = list(map(list, zip(*pattern)))
 
-    if not initial:
-        raise Exception("No fold found")
-
-    print("initial", initial)
-    s += smudge(pattern, initial, s)
+    s += smudge(pattern, initial)
 
 print(s)
+
+assert s == 24847 or s == 400
