@@ -1,0 +1,13 @@
+broadcaster -> a
+%a -> inv, con
+&inv -> b
+%b -> con
+&con -> output
+
+rx = 1 when dg outputs 0
+dg outputs 0 when all its inputs are 1
+  lk
+  zv
+  sp
+  xt
+find 1 cycles for these, multiply and gcd
