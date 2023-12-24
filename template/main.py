@@ -14,7 +14,6 @@ def make_data(input_file):
         for line in f:
             line = line.strip()
             ret.append(line)
-        pass
     return ret
 
 if len(sys.argv) > 1:
