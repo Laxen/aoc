@@ -48,20 +48,18 @@ for map in data:
         while seed_i < len(seed_intervals):
             seed_interval = seed_intervals[seed_i]
             dest_interval = (mapline[1], mapline[1] + mapline[2])
-            intersects, nonintersects = intersect([seed_interval], [dest_interval])
-            if intersects:
-                updated = False
-                for i in intersects:
-                    if i not in new_seed_intervals:
-                        new_seed_intervals.add(map_source_dest(i, mapline))
-                        updated = True
-
-                if not updated:
+            overlap, nonintersects = intersect([seed_interval], [dest_interval])
+            if overlap:
+                overlap = overlap[0]
+                if overlap not in new_seed_intervals:
+                    new_seed_intervals.add(map_source_dest(overlap, mapline))
+                else:
                     seed_i += 1
                     continue
 
                 del seed_intervals[seed_i]
-                seed_intervals += nonintersects
+                for nonintersect in nonintersects:
+                    seed_intervals += nonintersect
                 seed_i = 0
             else:
                 seed_i += 1
