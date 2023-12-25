@@ -16,9 +16,9 @@ def make_data(input_file):
             r2 = r2.split(",")
             r1 = [int(r1[0]), int(r1[1]), int(r1[2])]
             r2 = [int(r2[0]), int(r2[1]), int(r2[2])]
-            rx = [r1[0], r2[0]+1]
-            ry = [r1[1], r2[1]+1]
-            rz = [r1[2], r2[2]+1]
+            rx = [r1[0], r2[0]]
+            ry = [r1[1], r2[1]]
+            rz = [r1[2], r2[2]]
             ret.append([rx, ry, rz])
     return ret
 
@@ -37,37 +37,32 @@ def settle():
 
     for r in data:
         new_r = deepcopy(r)
-        # print("--handling", r)
 
         supported_by.append([])
+        overlap = False
 
-        max_z = -1
-        for i, r_ in enumerate(data):
-            if r_ == r:
-                continue
+        while not overlap:
+            if new_r[2][0] > 1:
+                new_r[2][0] -= 1
+                new_r[2][1] -= 1
+            else:
+                break
 
-            if overlaps(new_r[:2], r_[:2]):
-                # print("overlap", r_)
-                if r[2][0] >= r_[2][1]:
-                    if r_[2][1] > max_z:
-                        max_z = r_[2][1]
-                        supported_by[-1] = [i]
-                    elif r_[2][1] == max_z:
-                        supported_by[-1].append(i)
-                    # print("max_z", max_z)
+            for i, r_ in enumerate(data):
+                if r_ == r:
+                    continue
 
-        if max_z == -1:
-            diff = new_r[2][1] - new_r[2][0]
-            new_r[2][0] = 1
-            new_r[2][1] = 1 + diff
+                if overlaps(new_r, r_):
+                    # print("overlap", new_r, r_)
+                    overlap = True
+                    supported_by[-1].append(i)
+
+        if overlap:
+            new_r[2][0] += 1
+            new_r[2][1] += 1
             new_data.append(new_r)
         else:
-            diff = new_r[2][1] - new_r[2][0]
-            new_r[2][0] = max_z
-            new_r[2][1] = max_z + diff
             new_data.append(new_r)
-        # print("new_r", new_r)
-        # print("supported_by", supported_by[-1])
 
     return new_data, supported_by
 
